@@ -1,6 +1,11 @@
+
 .env
+lib
+Scripts
 
 # Other common ignores
+
+pyvenv.cfg
 __pycache__/
 *.pyc
 *.pyo
