@@ -86,6 +86,43 @@ def update_table():
         conn.commit()
         print('Data loaded successfully!')
 
+def insert_into_table():
+    sql = '''
+    INSERT INTO transit.transit_priority_corridor (identifier, name, corridor)
+    VALUES (%s, %s, ST_GeomFromText(%s, 2961))
+    '''
+    with fiona.open('transit_transformed.gpkg', mode='r') as gpkg:
+        with conn.cursor() as cur:
+            for feature in gpkg:
+                # Get the properties and geometry
+                props = feature['properties']
+                geom = shapely.geometry.shape(feature['geometry']).wkt
+                
+                # Execute SQL with the properties and geometry as parameters
+                cur.execute(sql, (props['OBJECTID'], props['ROUTE_FULL'], geom))
+            
+        # Commit changes to the database
+        conn.commit()
+        print('Data loaded successfully!')
+
+
+def insert_into_table2():
+    sql = '''
+    INSERT INTO transit.transit_route_priority_corridor (route_number_full, identifier)
+    VALUES (%s, %s)
+    '''
+    with fiona.open('transit_transformed.gpkg', mode='r') as gpkg:
+        with conn.cursor() as cur:
+            for feature in gpkg:
+                # Get the properties
+                props = feature['properties']
+                
+                # Execute SQL with the properties and geometry as parameters
+                cur.execute(sql, (props['ROUTE_FULL'], props['OBJECTID']))
+            
+        # Commit changes to the database
+        conn.commit()
+        print('Data loaded successfully!')
 
 # def print_all_tables():
 #     query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'transit'"
@@ -97,16 +134,16 @@ def update_table():
 
 if __name__ == '__main__':
   conn = connect_db()
-  file = 'transit_transformed.gpkg'
-  test_read_gpkg(file)
+  # file = 'transit_transformed.gpkg'
+  # test_read_gpkg(file)
 
   # transform_geomtry()
-
-  # Is there a way to print all the tables in the databse?
 
   # print_all_tables()
 
   # update_table()
+  # insert_into_table()
+  insert_into_table2()
   
 
     
