@@ -66,7 +66,7 @@ This function was mostly just for testing purposes and to make sure I converted 
 def test_read_gpkg(file_path):
     
     try:
-        # Open the GeoPackage file
+        
         with fiona.open(file_path, 'r') as source:
             print(f"Number of features: {len(source)}")
             print(f"CRS: {source.crs}")
@@ -74,7 +74,7 @@ def test_read_gpkg(file_path):
             print("Layer schema:")
             print(source.schema)
             
-            # Print the first feature
+            
             first_feature = next(iter(source), None)
             print("First feature:")
             print(first_feature)
@@ -96,13 +96,13 @@ def update_table():
     with fiona.open('transit_transformed.gpkg', mode='r') as gpkg:
         with conn.cursor() as cur:
             for feature in gpkg:
-                # Convert the geometry to WKT (Well-Known Text)
+                
                 geom = shapely.geometry.shape(feature['geometry']).wkt
                 
-                # Execute SQL with the geometry as a parameter
+                
                 cur.execute(sql, (geom,))
         
-        # Commit changes to the database
+       
         conn.commit()
         print('Data loaded successfully!')
 
@@ -118,14 +118,14 @@ def insert_into_table():
     with fiona.open('transit_transformed.gpkg', mode='r') as gpkg:
         with conn.cursor() as cur:
             for feature in gpkg:
-                # Get the properties and geometry
+               
                 props = feature['properties']
                 geom = shapely.geometry.shape(feature['geometry']).wkt
                 
-                # Execute SQL with the properties and geometry as parameters
+                
                 cur.execute(sql, (props['OBJECTID'], props['ROUTE_FULL'], geom))
             
-        # Commit changes to the database
+        
         conn.commit()
         print('Data loaded successfully!')
 
@@ -140,13 +140,13 @@ I wrote this function before realizing I needed to do this part in SQL, I left t
 #     with fiona.open('transit_transformed.gpkg', mode='r') as gpkg:
 #         with conn.cursor() as cur:
 #             for feature in gpkg:
-#                 # Get the properties
+#                
 #                 props = feature['properties']
                 
-#                 # Execute SQL with the properties and geometry as parameters
+#                
 #                 cur.execute(sql, (props['ROUTE_FULL'], props['OBJECTID']))
             
-#         # Commit changes to the database
+#        
 #         conn.commit()
 #         print('Data loaded successfully!')
 
